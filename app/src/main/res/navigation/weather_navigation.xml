@@ -7,5 +7,13 @@
     <fragment
         android:id="@+id/weatherFragment"
         android:name="com.mohamad.ghaleinterview.ui.fragments.WeatherFragment"
-        android:label="WeatherFragment" />
+        android:label="WeatherFragment" >
+        <action
+            android:id="@+id/action_weatherFragment_to_dailyWeatherDetailFragment"
+            app:destination="@id/dailyWeatherDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dailyWeatherDetailFragment"
+        android:name="com.mohamad.ghaleinterview.ui.fragments.DailyWeatherDetailFragment"
+        android:label="DailyWeatherDetailFragment" />
 </navigation>

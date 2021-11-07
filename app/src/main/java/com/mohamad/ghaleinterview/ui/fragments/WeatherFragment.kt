@@ -1,41 +1,49 @@
 package com.mohamad.ghaleinterview.ui.fragments
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.GnssAntennaInfo
-import android.location.Location
-import android.location.LocationManager
+
 import android.os.Bundle
 import android.view.View
-import android.widget.SearchView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mohamad.ghaleinterview.R
+import com.mohamad.ghaleinterview.adapters.DailyWeatherAdapter
+import com.mohamad.ghaleinterview.data.remote.response.dailyWeather.Daily
 import com.mohamad.ghaleinterview.databinding.FragmentWeatherBinding
+import com.mohamad.ghaleinterview.other.Constance.ICON_BASE_URL
 import com.mohamad.ghaleinterview.other.Status
+import com.mohamad.ghaleinterview.ui.viewModels.DailyDetail
 import com.mohamad.ghaleinterview.ui.viewModels.MainViewModel
-import java.security.Permission
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
-
+@AndroidEntryPoint
 class WeatherFragment:Fragment(R.layout.fragment_weather) {
 
-    private lateinit var binding:FragmentWeatherBinding
+    private  var _binding:FragmentWeatherBinding? = null
 
     private lateinit var mainViewModel:MainViewModel
 
+
+    private val binding get() = _binding!!
+
+    @Inject
+    lateinit var dailyWeatherAdapter: DailyWeatherAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentWeatherBinding.bind(view)
+        _binding = FragmentWeatherBinding.bind(view)
         initMainViewModel()
+        setUpRecyclerView()
         subscribeToObservers()
         setOnQueryTextListenerAndGetCurrentWeatherByCityName()
+        dailyWeatherAdapter.setOnClickListener {
+            navigateToDailyWeatherDetailFragment(it)
+        }
 
 
 
@@ -50,13 +58,15 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
         mainViewModel.weatherData.observe(viewLifecycleOwner,  { result ->
             when(result.status){
                 Status.LOADING -> {
-
+                showProgressBar()
                 }
 
                 Status.SUCCESS -> {
+                    hideProgressBar()
                     result.data?.let {
                         binding.tvCityName.text = it.name
-                        binding.tvDegree.text = it.main.temp.toInt().toString() + "\u2109"
+                        val temp = it.main.temp.toInt().toString() + "\u2109"
+                        binding.tvDegree.text = temp
                         setWeatherIcon(it.weather[0].icon)
 
 
@@ -65,10 +75,17 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
                 }
 
                 Status.ERROR -> {
-
+                 hideProgressBar()
                 }
 
+
             }
+
+        })
+        mainViewModel.dailyWeatherData.observe(viewLifecycleOwner,{
+
+          dailyWeatherAdapter.submitList(it.daily)
+
 
         })
     }
@@ -76,7 +93,7 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
 
 
  private fun setWeatherIcon(iconPath:String){
-     Glide.with(requireContext()).load("http://openweathermap.org/img/w/$iconPath"+".png").into(binding.ivWeatherIcon)
+     Glide.with(requireContext()).load("$ICON_BASE_URL$iconPath.png").into(binding.ivWeatherIcon)
  }
 
 
@@ -100,7 +117,36 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
 
 
 
+    private fun setUpRecyclerView(){
+        binding.rvDailyWeather.adapter = dailyWeatherAdapter
+        binding.rvDailyWeather.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL,false)
 
+    }
+
+
+    private fun navigateToDailyWeatherDetailFragment(daily:Daily){
+         mainViewModel.setDailyWeather(DailyDetail(daily.temp.day,
+         daily.temp.night,
+         daily.wind_speed,daily.humidity,
+         daily.weather[0].icon
+             ))
+        findNavController().navigate(R.id.action_weatherFragment_to_dailyWeatherDetailFragment)
+    }
+
+
+    private fun showProgressBar(){
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar(){
+        binding.progressBar.visibility = View.GONE
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 
 

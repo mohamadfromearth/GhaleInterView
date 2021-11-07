@@ -1,12 +1,12 @@
 package com.mohamad.ghaleinterview.ui.viewModels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.mohamad.ghaleinterview.GhaleApplication
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.*
+import com.bumptech.glide.Glide
 import com.mohamad.ghaleinterview.data.remote.response.WeatherData
+import com.mohamad.ghaleinterview.data.remote.response.dailyWeather.DailyWeatherData
+import com.mohamad.ghaleinterview.other.Constance.ICON_BASE_URL
 import com.mohamad.ghaleinterview.other.Resource
 import com.mohamad.ghaleinterview.other.Status
 import com.mohamad.ghaleinterview.repository.WeatherRepository
@@ -21,7 +21,21 @@ class MainViewModel @Inject constructor(
 ):ViewModel(){
 
    private val _weatherData = MutableLiveData<Resource<WeatherData>>()
-   val weatherData = _weatherData
+   val weatherData: LiveData<Resource<WeatherData>> = _weatherData
+
+
+   private val _dailyWeatherData = MutableLiveData<DailyWeatherData>()
+   val dailyWeatherData: LiveData<DailyWeatherData> = _dailyWeatherData
+
+
+   private val _dailyDetail = MutableLiveData<DailyDetail>()
+   val dailyDetail:LiveData<DailyDetail> = _dailyDetail
+
+   fun setDailyWeather(dailyDetail: DailyDetail){
+       _dailyDetail.postValue(dailyDetail)
+   }
+
+
 
 
 
@@ -30,6 +44,8 @@ class MainViewModel @Inject constructor(
         _weatherData.postValue(Resource(Status.LOADING,null,null))
         try {
             val response = weatherRepository.getCurrentWeatherByLongAndLat(lat,lon)
+             getDailyWeatherData(lat,lon)
+
         _weatherData.postValue(handleResponse(response))
 
         }catch (t:Throwable){
@@ -42,11 +58,31 @@ class MainViewModel @Inject constructor(
         _weatherData.postValue(Resource(Status.LOADING,null,null))
         try {
             val response = weatherRepository.getCurrentWeatherByCityName(cityName)
+            val lat = response.body()?.coord?.lat.toString()
+            val lon = response.body()?.coord?.lon.toString()
+            getDailyWeatherData(lat,lon)
             _weatherData.postValue(handleResponse(response))
         }catch (t:Throwable){
             _weatherData.postValue(Resource.error("Network failure",null))
         }
     }
+
+
+
+    private suspend fun getDailyWeatherData(lat:String,lon:String){
+        val response = weatherRepository.getDailyWeatherData(lat,lon)
+        if (response.isSuccessful){
+            _dailyWeatherData.postValue(response.body())
+        }
+
+
+    }
+
+
+
+
+
+
 
 
 
@@ -65,4 +101,13 @@ class MainViewModel @Inject constructor(
 
 
     }
+
+
+data class DailyDetail(
+    val tempDay:Double,
+    val tempNight:Double,
+    val windSpeed:Double,
+    val humidity:Int,
+    val weatherIcon:String
+)
 

@@ -3,6 +3,7 @@ package com.mohamad.ghaleinterview.di
 import android.content.Context
 import android.location.LocationManager
 import androidx.core.content.ContextCompat.getSystemService
+import com.mohamad.ghaleinterview.adapters.DailyWeatherAdapter
 import com.mohamad.ghaleinterview.data.remote.WeatherApi
 import com.mohamad.ghaleinterview.other.Constance.BASE_URL
 import com.mohamad.ghaleinterview.repository.WeatherRepository
@@ -41,6 +42,13 @@ object AppModule {
     @Provides
     fun provideLocationManager(@ApplicationContext context: Context) =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+
+
+    @Singleton
+    @Provides
+    fun provideDailyWeatherAdapter() = DailyWeatherAdapter()
+
 
 
 

@@ -84,7 +84,12 @@ class MainActivity : AppCompatActivity() {
 
                 fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
 
-                mainViewModel.getWeatherDataByLongAndLat(loc.latitude.toString(),loc.longitude.toString())
+
+               loc?.let { location ->
+                   mainViewModel.getWeatherDataByLongAndLat(location.latitude.toString(),location.longitude.toString())
+
+               }
+
 
 
                 }
