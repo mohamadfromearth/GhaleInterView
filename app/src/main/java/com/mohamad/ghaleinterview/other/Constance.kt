@@ -10,12 +10,6 @@ object Constance {
 
     const val ICON_BASE_URL = "https://openweathermap.org/img/w/"
 
-    const val TEMP = "TEMP"
 
-    const val WIND_SPEED = "WIND_SPEED"
-
-    const val HUMIDITY = "HUMIDITY"
-
-    const val WEATHER_ICON = "WEATHER_ICON"
 
 }

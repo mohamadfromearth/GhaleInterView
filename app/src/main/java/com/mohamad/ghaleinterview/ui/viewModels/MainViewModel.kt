@@ -40,11 +40,15 @@ class MainViewModel @Inject constructor(
 
 
 
-    fun getWeatherDataByLongAndLat(lat:String,lon:String) = viewModelScope.launch {
+    fun getWeatherDataByLongAndLat(lat:Double?,lon:Double?) = viewModelScope.launch {
         _weatherData.postValue(Resource(Status.LOADING,null,null))
+        if (lat == null || lon == null){
+            _weatherData.postValue(Resource.error("Location not found",null))
+            return@launch
+        }
         try {
-            val response = weatherRepository.getCurrentWeatherByLongAndLat(lat,lon)
-             getDailyWeatherData(lat,lon)
+            val response = weatherRepository.getCurrentWeatherByLongAndLat(lat.toString(),lon.toString())
+             getDailyWeatherData(lat.toString(),lon.toString())
 
         _weatherData.postValue(handleResponse(response))
 

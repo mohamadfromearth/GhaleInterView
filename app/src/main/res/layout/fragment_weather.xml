@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    >
 
 
     <androidx.appcompat.widget.SearchView
@@ -41,7 +43,6 @@
         android:layout_height="0dp"
         app:layout_constraintHeight_percent="0.12"
         app:layout_constraintWidth_percent="0.25"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDegree" />
