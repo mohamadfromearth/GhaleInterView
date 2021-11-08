@@ -3,6 +3,7 @@ package com.mohamad.ghaleinterview.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -78,6 +79,7 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
 
                     Status.ERROR -> {
                         hideProgressBar()
+                        Toast.makeText(requireContext(),result.message,Toast.LENGTH_SHORT).show()
                     }
 
 
