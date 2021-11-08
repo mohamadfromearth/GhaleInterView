@@ -40,7 +40,7 @@ private lateinit var binding:ItemDailyWeatherBinding
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
         binding = ItemDailyWeatherBinding.bind(holder.itemView)
         val daily = differ.currentList[position]
-        binding.tvTemp.text = daily.temp.day.toString()
+        binding.tvTemp.text = daily.temp.day.toInt().toString() + "\u2109"
         Glide.with(binding.root).load("$ICON_BASE_URL${daily.weather[0].icon}.png").into(binding.ivDailyWeatherIconItem)
         binding.root.setOnClickListener {
             clickListener?.let {

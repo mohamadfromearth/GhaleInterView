@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
 
     private val mainViewModel:MainViewModel by viewModels()
 
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -59,7 +63,15 @@ class MainActivity : AppCompatActivity() {
 
 
                     }).addOnSuccessListener { loc ->
-                    mainViewModel.getWeatherDataByLongAndLat(loc.latitude,loc.longitude)
+                   mainViewModel.shouldUpdateWeatherData.observe(this, { shouldUpdate ->
+                       if (shouldUpdate){
+                           mainViewModel.getWeatherDataByLongAndLat(loc.latitude,loc.longitude)
+                       }
+                   })
+                    mainViewModel.setShouldUpdateWeatherData(false)
+
+
+
 
 
                 }

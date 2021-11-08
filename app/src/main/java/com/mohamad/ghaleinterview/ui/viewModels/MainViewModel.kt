@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.mohamad.ghaleinterview.data.remote.response.WeatherData
 import com.mohamad.ghaleinterview.data.remote.response.dailyWeather.DailyWeatherData
 import com.mohamad.ghaleinterview.other.Constance.ICON_BASE_URL
+import com.mohamad.ghaleinterview.other.Event
 import com.mohamad.ghaleinterview.other.Resource
 import com.mohamad.ghaleinterview.other.Status
 import com.mohamad.ghaleinterview.repository.WeatherRepository
@@ -20,12 +21,19 @@ class MainViewModel @Inject constructor(
    private val weatherRepository: WeatherRepository
 ):ViewModel(){
 
+
+
    private val _weatherData = MutableLiveData<Resource<WeatherData>>()
    val weatherData: LiveData<Resource<WeatherData>> = _weatherData
 
 
    private val _dailyWeatherData = MutableLiveData<DailyWeatherData>()
    val dailyWeatherData: LiveData<DailyWeatherData> = _dailyWeatherData
+
+
+
+    private val _shouldUpdateWeatherData = MutableLiveData<Boolean>()
+    val shouldUpdateWeatherData:LiveData<Boolean> = _shouldUpdateWeatherData
 
 
    private val _dailyDetail = MutableLiveData<DailyDetail>()
@@ -35,8 +43,15 @@ class MainViewModel @Inject constructor(
        _dailyDetail.postValue(dailyDetail)
    }
 
+   fun setShouldUpdateWeatherData(shouldUpdate:Boolean){
+       _shouldUpdateWeatherData.postValue(shouldUpdate)
+   }
 
 
+  init {
+      _shouldUpdateWeatherData.value = true
+
+  }
 
 
 

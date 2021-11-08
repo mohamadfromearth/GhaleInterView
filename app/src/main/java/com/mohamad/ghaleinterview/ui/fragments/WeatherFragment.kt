@@ -56,30 +56,35 @@ class WeatherFragment:Fragment(R.layout.fragment_weather) {
 
     private fun subscribeToObservers(){
         mainViewModel.weatherData.observe(viewLifecycleOwner,  { result ->
-            when(result.status){
-                Status.LOADING -> {
-                showProgressBar()
-                }
-
-                Status.SUCCESS -> {
-                    hideProgressBar()
-                    result.data?.let {
-                        binding.tvCityName.text = it.name
-                        val temp = it.main.temp.toInt().toString() + "\u2109"
-                        binding.tvDegree.text = temp
-                        setWeatherIcon(it.weather[0].icon)
 
 
-
+             when(result.status){
+                    Status.LOADING -> {
+                        showProgressBar()
                     }
+
+                    Status.SUCCESS -> {
+                        hideProgressBar()
+                        result.data?.let {
+                            binding.tvCityName.text = it.name
+                            val temp = it.main.temp.toInt().toString() + "\u2109"
+                            binding.tvDegree.text = temp
+                            setWeatherIcon(it.weather[0].icon)
+
+
+
+                        }
+                    }
+
+                    Status.ERROR -> {
+                        hideProgressBar()
+                    }
+
+
                 }
 
-                Status.ERROR -> {
-                 hideProgressBar()
-                }
 
 
-            }
 
         })
         mainViewModel.dailyWeatherData.observe(viewLifecycleOwner,{
